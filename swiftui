@@ -19,6 +19,27 @@
 # PUBLISHED ON GITHUB ON OCTOBER 25th, 2024.
 # For anyone reading this: I could have done this earlier. The development goes on.
 
+FDisco() {
+  selectedFile=$(dialog --stdout --title "FDisco" --fselect / 15 40)
+  useAPP=$(dialog --title "FDisco" --menu "Select the app you want to use to open the following file: $selectedFile" 12 45 25 1 "Nano" 2 "Execute as program" 3 "TexBlock" 3>&1 1>&2 2>&3 3>&-)
+
+  case $useAPP in
+  1)
+    sudo nano $selectedFile
+    ;;
+  2)
+    sudo chmod +x $selectedFile
+    sudo bash $selectedFile
+    ;;
+  3)
+    dialog --title "Texblock: $selectedFile" --textbox $selectedFile 60 60
+    ;;
+  esac
+  if $RUNNING_IN_SCRIPT; then
+    appmenu
+  fi
+}
+
 # Calendar app - called from appmenu()
 calendar() {
   currentdate=$(date +'%d %m %Y') # an argument needed for the "calendar" function of the dialog module.
@@ -89,7 +110,7 @@ admintools() {
   CONTROLS=$(dialog --title "Options" --menu "" 12 45 25 1 "Change Locales" 2 "Change Hostname" 3>&1 1>&2 2>&3 3>&-)
   case $CONTROLS in
   1)
-    dialog --title "Warning" --msgbox "You will have to uncomment a specific locale manually."
+    dialog --title "Warning" --msgbox "You will have to uncomment the chosen locale manually." 10 35
     clear
     sudo nano /etc/locale.gen
     clear
@@ -141,7 +162,7 @@ countdown() {
 
 # A menu of options with all the apps
 appmenu() {
-  APP=$(dialog --title "Apps" --menu "" 12 45 25 1 "Distrohoop" 2 "Countdown" 3 "PacTUI" 4 "Calendar" 5 "More apps..." 3>&1 1>&2 2>&3 3>&-)
+  APP=$(dialog --title "Apps" --menu "" 15 45 12 1 "Distrohoop" 2 "Countdown" 3 "PacTUI" 4 "Calendar" 5 "Links Browser" 6 "FDisco File Manager" 7 "More apps..." 3>&1 1>&2 2>&3 3>&-)
 
   case $APP in
   1)
@@ -160,6 +181,12 @@ appmenu() {
     calendar
     ;;
   5)
+    links "https://google.com"
+    ;;
+  6)
+    FDisco
+    ;;
+  7)
     # That is alpha-v0.01. What did you expect?
     dialog --msgbox "More apps coming soon!" 5 30
     appmenu
@@ -177,12 +204,14 @@ PacTUI() {
   #PASSWORD=$(dialog --title "Password" --passwordbox "Enter password for user $whoami:" 15 30 3>&1 1>&2 2>&3 3>&-)
   clear
   if pacman -Ss "$PACKAGE" >/dev/null 2>&1; then
-    sudo pacman --noconfirm -S "$PACKAGE"
+    if [[ -n "$PACKAGE" && "$PACKAGE" != " " ]]; then
+      sudo pacman --noconfirm -S "$PACKAGE"
+    fi
   else
     dialog --msgbox "Invalid package name!" 15 30
   fi
   if $RUNNING_IN_SCRIPT; then
-    main
+    appmenu
   fi
 }
 

@@ -137,21 +137,21 @@ countdown() {
 
 # A menu of options with all the apps
 appmenu() {
-  APP=$(dialog --title "Apps" --menu "" 12 45 25 1 "Distrohoop" 2 "Countdown" 3 "AptTUI" 4 "Calendar" 5 "More apps..." 3>&1 1>&2 2>&3 3>&-)
+  APP=$(dialog --title "Apps" --menu "" 12 45 25 1 "Distrohoop" 2 "Countdown" 3 "PacTUI" 4 "Calendar" 5 "More apps..." 3>&1 1>&2 2>&3 3>&-)
 
   case $APP in
   1)
-    # Explaining further: my parents took my laptop and ever since Distrohoop is lost media.
-    dialog --msgbox "Since August of 2024 distrohoop is officially lost.\n\nThe search for the original code is in progress." 20 35
+    # I got the laptop back
+    dialog --msgbox "Coming soon!." 20 35
     appmenu
     ;;
   2)
     countdown
     ;;
   3)
-    # Yes, you can run AptTUI both from the main and the app menu
-    AptTUI
-    ;; #Opens the terminal... By quitting.
+    # Yes, you can run PacTUI both from the main and the app menu
+    PacTUI
+    ;;
   4)
     calendar
     ;;
@@ -166,14 +166,14 @@ appmenu() {
   fi
 }
 
-# A simple TUI module for the apt command.
-AptTUI() {
-  PACKAGE=$(dialog --title "AptTUI" --inputbox "Enter a name of a package you want to install." 15 30 3>&1 1>&2 2>&3 3>&-)
+# A simple TUI module for installing pacman packages.
+PacTUI() {
+  PACKAGE=$(dialog --title "PacTUI" --inputbox "Enter a name of a package you want to install." 15 30 3>&1 1>&2 2>&3 3>&-)
   #USERNAME=$(whoami)
   #PASSWORD=$(dialog --title "Password" --passwordbox "Enter password for user $whoami:" 15 30 3>&1 1>&2 2>&3 3>&-)
   clear
-  if apt-cache show "$PACKAGE" >/dev/null 2>&1; then
-    sudo apt -y install "$PACKAGE"
+  if pacman -Ss "$PACKAGE" >/dev/null 2>&1; then
+    sudo pacman --noconfirm -S "$PACKAGE"
   else
     dialog --msgbox "Invalid package name!" 15 30
   fi
@@ -188,7 +188,7 @@ bootoptions() {
 
   case $CHOICE in
   1)
-    systemctl shutdown -h now
+    systemctl shutdown now
     ;;
   2)
     systemctl reboot now
@@ -221,7 +221,7 @@ main() {
     options
     ;;
   4)
-    AptTUI
+    PacTUI
     ;;
   5)
     bootoptions
@@ -276,9 +276,9 @@ case "$1" in
   appmenu
   clear
   ;;
-"AptTUI")
+"PacTUI")
   RUNNING_IN_SCRIPT=false
-  AptTUI
+  PacTUI
   clear
   ;;
 "options")
@@ -301,4 +301,3 @@ esac
 # Hope you enjoyed reading my goofy comments
 # LGBTQ+ rights btw
 # - theridev
-

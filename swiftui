@@ -245,6 +245,9 @@ main() {
   1)
     #Opens the terminal... By quitting.
     clear
+    echo
+    echo -e "\033[1mType in 'swiftui' to come back to the interface.\033[0m"
+    echo
     exit 0
     ;;
   2)

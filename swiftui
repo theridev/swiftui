@@ -89,7 +89,11 @@ admintools() {
   CONTROLS=$(dialog --title "Options" --menu "" 12 45 25 1 "Change Locales" 2 "Change Hostname" 3>&1 1>&2 2>&3 3>&-)
   case $CONTROLS in
   1)
-    sudo dpkg-reconfigure locales # opens the TUI used by dpkg for the reconfigure locales function.
+    dialog --title "Warning" --msgbox "You will have to uncomment a specific locale manually."
+    clear
+    sudo nano /etc/locale.gen
+    clear
+    sudo locale-gen
     ;;
   2)
     hostnametui
@@ -142,7 +146,7 @@ appmenu() {
   case $APP in
   1)
     # I got the laptop back
-    dialog --msgbox "Coming soon!." 20 35
+    dialog --msgbox "Coming soon!" 20 35
     appmenu
     ;;
   2)
@@ -188,13 +192,13 @@ bootoptions() {
 
   case $CHOICE in
   1)
-    systemctl shutdown now
+    sudo shutdown now
     ;;
   2)
-    systemctl reboot now
+    sudo reboot now
     ;;
   3)
-    systemctl suspend
+    sudo systemctl suspend
     main
     ;;
 
@@ -206,7 +210,7 @@ bootoptions() {
 
 # The main function.
 main() {
-  CHOICE=$(dialog --nocancel --menu "Welcome to Swift Linux!" 12 45 25 1 "Terminal" 2 "Apps" 3 "Options" 4 "AptTUI" 5 "Shutdown" 3>&1 1>&2 2>&3 3>&-)
+  CHOICE=$(dialog --nocancel --menu "Welcome to Swift Linux!" 12 45 25 1 "Terminal" 2 "Apps" 3 "Options" 4 "PacTUI" 5 "Shutdown" 3>&1 1>&2 2>&3 3>&-)
 
   case $CHOICE in
   1)

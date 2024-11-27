@@ -1,0 +1,26 @@
+#!/bin/bash
+
+while true; do
+  # Prompt for username
+  dialog --clear --title "SGreeter" --inputbox "Username:" 8 40 2>/tmp/sgreetlog_username
+  username=$(cat /tmp/sgreetlog_username)
+
+  # Prompt for password in a separate password box
+  dialog --clear --title "SGreeter" --passwordbox "Password:" 8 40 2>/tmp/sgreetlog_password
+  password=$(cat /tmp/sgreetlog_password)
+
+  # Clean up temporary files
+  rm -f /tmp/sgreetlog_username /tmp/sgreetlog_password
+
+  # Attempt authentication using `sudo -k`
+  if echo "$password" | sudo -k -S -u "$username" true 2>/dev/null; then
+    dialog --msgbox "Login successful. Welcome, $username!" 8 40
+    break
+  else
+    dialog --msgbox "Login failed! Invalid username or password." 8 40
+  fi
+done
+
+# Start user shell after successful login
+exec sudo -u "$username" -i
+

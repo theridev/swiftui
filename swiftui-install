@@ -3,6 +3,10 @@
 LGREEN='\033[01;32m'
 RESTORE='\033[0m'
 
+echo -e "$LGREEN>>$RESTORE Installing dialog..."
+
+sudo pacman --noconfirm -Sy dialog
+
 echo -e "$LGREEN>>$RESTORE Cloning swiftui..."
 
 git clone https://github.com/theridev/swiftui.git
@@ -18,5 +22,7 @@ cd shortcuts
 sudo chmod -v -R 755 $PWD
 echo -e "$LGREEN>>$RESTORE Moving shortcuts to /usr/local/bin..."
 sudo mv -v * /usr/local/bin
-
+echo -e "$LGREEN>>$RESTORE Generating .dialogrc..."
+mkdir -v ~/.config/swiftui
+dialog --create-rc ~/.config/swiftui/.dialogrc
 echo -e "$LGREEN>>$RESTORE Swiftui is installed!"
